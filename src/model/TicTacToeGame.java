@@ -46,7 +46,7 @@ public class TicTacToeGame extends Observable {
   }
 
   /**
-   * Wap strategies for the ComputerPlayer
+   * Swap strategies for the ComputerPlayer
    * @param AI The algorithm use by the ComputerPlayer to choose the next move
    */
   public void setComputerPlayerStrategy(TicTacToeStrategy AI) {
@@ -94,7 +94,7 @@ public class TicTacToeGame extends Observable {
   }
 
   /**
-   * Proved a textual version of this tic tac toe board.
+   * Provide a textual version of this tic tac toe board.
    */
   @Override
   public String toString() {
