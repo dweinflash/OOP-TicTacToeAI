@@ -87,14 +87,22 @@ public class TicTacToeGUI extends Application {
   }
 
   private void setupMenus() {
-    MenuItem beginner = new MenuItem("RandomAI");
+    // Strategies menu options
+	MenuItem beginner = new MenuItem("RandomAI");
     MenuItem intermediate = new MenuItem("Intermediate");
     Menu strategies = new Menu("Stategies");
     strategies.getItems().addAll(beginner, intermediate);
+    
+    // Views menu options
+    Menu views = new Menu("Views");
+    MenuItem button = new MenuItem("Button");
+    MenuItem textArea = new MenuItem("TextArea");
+    MenuItem drawing = new MenuItem("Drawing");
+    views.getItems().addAll(button, textArea, drawing);
 
     MenuItem newGame = new MenuItem("New Game");
     Menu options = new Menu("Options");
-    options.getItems().addAll(newGame, strategies);
+    options.getItems().addAll(newGame, strategies, views);
 
     menuBar = new MenuBar();
     menuBar.getMenus().addAll(options);
@@ -104,6 +112,9 @@ public class TicTacToeGUI extends Application {
     newGame.setOnAction(menuListener);
     beginner.setOnAction(menuListener);
     intermediate.setOnAction(menuListener);
+    button.setOnAction(menuListener);
+    textArea.setOnAction(menuListener);
+    drawing.setOnAction(menuListener);
   }
 
   private void setViewTo(Observer newView) {
