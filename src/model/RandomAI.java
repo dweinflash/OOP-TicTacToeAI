@@ -15,7 +15,11 @@ public class RandomAI implements TicTacToeStrategy {
   // Find an open spot while ignoring possible wins and stops (block a guaranteed win)
   @Override
   public Point desiredMove(TicTacToeGame theGame) {
-    // Return a random available Point
+    // Throw IGotNowhereToGoException if no move available
+	if (theGame.maxMovesRemaining() == 0)
+		throw new IGotNowhereToGoException("I got nowhere to go!");
+	
+	// Return a random available Point
 	
 	Random random = new Random();
 	  

@@ -120,7 +120,7 @@ public class IntermediateAI implements TicTacToeStrategy {
 	}
 	
 	// search for row to block
-	int row;
+	int row = 0;
 	for (int i = 0; i < rowsToBlock.size(); i++)
 	{
 		row = rowsToBlock.get(i);
@@ -130,7 +130,7 @@ public class IntermediateAI implements TicTacToeStrategy {
 	}
 	
 	// search for column to block
-	int column;
+	int column = 0;
 	for (int i = 0; i < colsToBlock.size(); i++)
 	{
 		column = colsToBlock.get(i);
@@ -156,20 +156,37 @@ public class IntermediateAI implements TicTacToeStrategy {
 			return new Point(3-d-1,d);
 	}
 	
-	// return random Point
-	Random random = new Random();
-	  
-	row =  random.nextInt(3);
-	column = random.nextInt(3);
 	
-	// find random, available spot
-	while (!theGame.available(row, column))
+	// search for available corner on board
+	// begin upper right corner, searching clockwise
+	
+	int[] rows = {0, 2, 2, 0};
+	int[] cols = {2, 2, 0, 0};
+	
+	// find available corner
+	for (int i = 0; i < 4; i++)
 	{
-		row = random.nextInt(3);
-		column = random.nextInt(3);
+		row = rows[i];
+		column = cols[i];
+		if (theGame.available(row, column))
+			return new Point(row,column);
 	}
 	
-    return new Point(row, column);
+	// choose any available spot
+	for (int r = 0; r < 3; r++)
+	{
+		outerloop:
+		for (int c = 0; c < 3; c++)
+		{
+			row = r;
+			column = c;
+			if (theGame.available(r, c))
+				break outerloop;
+		}
+	}
+	
+	return new Point(row, column);
+	
   }
   
   private int findURLL(TicTacToeGame theGame)
