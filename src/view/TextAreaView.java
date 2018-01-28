@@ -3,6 +3,8 @@ package view;
 import java.util.Observable;
 import java.util.Observer;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -22,9 +24,11 @@ public class TextAreaView extends BorderPane implements Observer {
   private TextField columnField;
   private Button button;
   private TextArea textArea;
+  private boolean endGame;
 
   public TextAreaView(TicTacToeGame TicTacToeGame) {
     theGame = TicTacToeGame;
+    endGame = false;
     
 	// grid
 	topGrid = new GridPane();
@@ -73,12 +77,95 @@ public class TextAreaView extends BorderPane implements Observer {
 	button.setFont(myFont);
 	button.setText("Make move");
 	topGrid.add(button,0,2);
+	
+	ButtonListener handler = new ButtonListener();
+	button.setOnAction(handler);
   }
 
+  private class ButtonListener implements EventHandler<ActionEvent> {
+
+	@Override
+	public void handle(ActionEvent arg0) {
+		// handle Make Move button
+		
+		int row;
+		int column;
+		
+		if(endGame == true)
+			return;
+		
+		try // row and column must be integer
+		{
+			row = Integer.parseInt(rowField.getText());
+			column = Integer.parseInt(columnField.getText());
+		}
+		catch (Exception e)
+		{
+			button.setText("Invalid choice");
+			return;
+		}
+		
+		// bounds of row and column 0 based
+		if ((row < 0 || row > 2) || (column < 0 || column > 2))
+		{
+			button.setText("Invalid choice");
+			return;
+		}
+		
+		// spot not available
+		if (!theGame.available(row, column))
+		{
+			button.setText("Invalid choice");
+			return;
+		}
+		
+		// valid input
+		rowField.setText("");
+		columnField.setText("");
+		
+		theGame.humanMove(row, column, false);
+		
+		if (theGame.tied())
+		{
+			button.setText("Tie");
+			endGame = true;
+			return;
+		}
+		
+		if (theGame.didWin('X'))
+		{
+			button.setText("X wins");
+			endGame = true;
+			return;
+		}
+		
+		if (theGame.didWin('O'))
+		{
+			button.setText("O wins");
+			endGame = true;
+			return;
+		}
+		
+		button.setText("Make move");
+		
+	}
+	  
+  }
+  
   @Override
   public void update(Observable o, Object arg) {
     // TODO Auto-generated method stub
 	textArea.setText(theGame.toString());
+	
+	if (arg != null && arg.equals("startNewGame()"))
+	{
+		endGame = false;
+		button.setText("Make move");
+		rowField.setText("");
+		columnField.setText("");
+	}
+
+	
     System.out.println("\nIn TextAreaView.update() \n" + o);
   }
 }
