@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
@@ -63,6 +64,9 @@ public class TextAreaView extends BorderPane implements Observer {
 	rowField.setMaxWidth(60);
 	topGrid.add(rowField, 0, 0);
 	
+	EventHandler<? super KeyEvent> handlerText = new TextFieldListener();
+	rowField.setOnKeyPressed(handlerText);
+	
 	// column label and text box
 	Label column = new Label("column");
 	topGrid.add(column, 1, 1);
@@ -70,6 +74,8 @@ public class TextAreaView extends BorderPane implements Observer {
 	columnField = new TextField();
 	topGrid.add(columnField, 0, 1);
 	columnField.setMaxWidth(60);
+	
+	columnField.setOnKeyPressed(handlerText);
 	
 	// button
 	Font myFont = new Font("Courier", 11);
@@ -82,6 +88,19 @@ public class TextAreaView extends BorderPane implements Observer {
 	button.setOnAction(handler);
   }
 
+  private class TextFieldListener implements EventHandler<KeyEvent> {
+
+	@Override
+	public void handle(KeyEvent event) {
+		// TODO Auto-generated method stub
+		if (theGame.stillRunning() == false)
+			return;
+			
+		button.setText("Make move");
+	}
+	  
+  }
+  
   private class ButtonListener implements EventHandler<ActionEvent> {
 
 	@Override
@@ -91,7 +110,7 @@ public class TextAreaView extends BorderPane implements Observer {
 		int row;
 		int column;
 		
-		if(endGame == true)
+		if (theGame.stillRunning() == false)
 			return;
 		
 		try // row and column must be integer
@@ -165,6 +184,14 @@ public class TextAreaView extends BorderPane implements Observer {
 		columnField.setText("");
 	}
 
+	if (theGame.tied())
+		button.setText("Tie");
+	
+	if (theGame.didWin('X'))
+		button.setText("X wins");
+
+	if (theGame.didWin('O'))
+		button.setText("O wins");
 	
     System.out.println("\nIn TextAreaView.update() \n" + o);
   }

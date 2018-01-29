@@ -30,6 +30,7 @@ public class DrawingView extends BorderPane implements Observer {
 	private Image imgO;
 	private Image imgX;
 	private ArrayList<ArrayList<Point>> squares;
+	private GraphicsContext gc;
 	
 	public DrawingView(TicTacToeGame TicTacToeGame)
 	{
@@ -106,7 +107,7 @@ public class DrawingView extends BorderPane implements Observer {
     	Canvas canvas = new Canvas(200,200);
     	EventHandler<MouseEvent> click = new CanvasHandler();
     	canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, click);
-    	GraphicsContext gc = canvas.getGraphicsContext2D();
+    	gc = canvas.getGraphicsContext2D();
     	root.getChildren().add(canvas);
 		
     	// draw board on canvas
@@ -119,38 +120,10 @@ public class DrawingView extends BorderPane implements Observer {
     	gc.strokeLine(0, 132, 200, 132);
     	
     	// import X and O images
-    	imgO = null;
-    	imgX = null;
+    	imgO = new Image("file:images/o.png", false);
+    	imgX = new Image("file:images/x.png", false);
     	
-    	// ******************************************
-    	// FIX THIS SO FILE PATH WORKS FOR ANY SYSTEM
-    	// ******************************************
-    	try 
-    	{
-    		imgO = new Image(new FileInputStream("C:\\Users\\david\\Documents\\CS 335\\"
-    				+ "gitrepos\\ttt-patterns-dweinflash\\images\\o.png"));
-    		imgX = new Image(new FileInputStream("C:\\Users\\david\\Documents\\CS 335\\"
-    				+ "gitrepos\\ttt-patterns-dweinflash\\images\\x.png"));
-    	}
-    	catch (Exception e)
-    	{
-    		System.out.println("X and O images not found.");
-    	}
-    	
-    	// top row
-    	gc.drawImage(imgX, 18, 18);
-    	gc.drawImage(imgX, 84, 18);
-    	gc.drawImage(imgX, 150, 18);
-    	
-    	// mid row
-    	gc.drawImage(imgO, 18, 84);
-    	gc.drawImage(imgO, 84, 84);
-    	gc.drawImage(imgO, 150, 84);
-    	
-    	// bottom row
-    	gc.drawImage(imgX, 18, 150);
-    	gc.drawImage(imgX, 84, 150);
-    	gc.drawImage(imgX, 150, 150);
+
     	
     	// set canvas
         BorderPane.setAlignment(canvas, Pos.CENTER);
@@ -169,8 +142,75 @@ public class DrawingView extends BorderPane implements Observer {
 	
 	@Override
 	public void update(Observable o, Object arg1) {
-		// TODO Auto-generated method stub
-		System.out.println("\nIn DrawingView.update() \n");
+
+		if (arg1 != null && arg1.equals("startNewGame()"))
+		{
+			endGame = false;
+			stateButton.setText("Make move");
+			
+			// clear and re-draw board
+			gc.clearRect(0, 0, 200, 200);
+	        gc.strokeRoundRect(0, 0, 200, 200, 0, 0);
+	    	gc.strokeLine(66,0,66,200);
+	    	gc.strokeLine(132, 0, 132, 200);
+	    	gc.strokeLine(0, 66, 200, 66);
+	    	gc.strokeLine(0, 132, 200, 132);
+		}
+		
+		// Do not draw on board if game has already ended
+		if ((theGame.stillRunning() == false) && (endGame == true))
+			return;
+		
+		char[][] board = theGame.getTicTacToeBoard();
+		
+		// list of squares with coordinates for drawing in center of square
+		// square one is first entry, top left of board
+		int[][] squareCoords = {{18, 18}, {84, 18}, {150, 18},
+								{18, 84}, {84,84}, {150, 84},
+								{18,150}, {84,150}, {150,150}};
+    	
+		char symbol;
+		int squareCoordsIdx = -1;
+		int xCoord;
+		int yCoord;
+		
+		// draw Xs and Os on canvas to match theGame board
+		for (int r = 0; r < 3; r++)
+		{
+			for (int c = 0; c < 3; c++)
+			{
+				squareCoordsIdx++;
+				if (!theGame.available(r, c))
+				{
+					symbol = board[r][c];
+					xCoord = squareCoords[squareCoordsIdx][0];
+					yCoord = squareCoords[squareCoordsIdx][1];
+					if (symbol == 'X')
+						gc.drawImage(imgX, xCoord, yCoord);
+					else
+						gc.drawImage(imgO, xCoord, yCoord);
+				}
+			}
+		}
+		
+		if (theGame.tied())
+		{
+			stateButton.setText("Tie");
+			endGame = true;
+		}
+		
+		if (theGame.didWin('X'))
+		{
+			stateButton.setText("X wins");
+			endGame = true;
+		}
+		
+		if (theGame.didWin('O'))
+		{
+			stateButton.setText("O wins");
+			endGame = true;
+		}
+		
 	}
 	
 	private class CanvasHandler implements EventHandler<MouseEvent> 
@@ -178,7 +218,10 @@ public class DrawingView extends BorderPane implements Observer {
 
 		@Override
 		public void handle(MouseEvent e) {
-			// TODO Auto-generated method stub
+			
+			// Do not draw on theGame if game has already ended
+			if ((theGame.stillRunning() == false) && (endGame == true))
+				return;
 			
 			int clickX = (int) e.getX();
 			int clickY = (int) e.getY();
