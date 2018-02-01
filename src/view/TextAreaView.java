@@ -17,6 +17,14 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import model.TicTacToeGame;
 
+/**
+ * This TextAreaView provides a text area for the player to input moves.
+ * The view includes a text area, text fields and button to select a move.
+ * Illegal moves will be notified in the button text.
+ * 
+ * @author David Weinflash
+ */
+
 public class TextAreaView extends BorderPane implements Observer {
    
   private TicTacToeGame theGame;
@@ -30,6 +38,12 @@ public class TextAreaView extends BorderPane implements Observer {
   public TextAreaView(TicTacToeGame TicTacToeGame) {
     theGame = TicTacToeGame;
     endGame = false;
+    
+	/**
+	* Construct a grid and place on top of BorderPane.
+	* Include text fields and button for player to select a move in grid.
+	* Construct a text area and display the current game on bottom of BorderPane.
+	*/
     
 	// grid
 	topGrid = new GridPane();
@@ -56,6 +70,12 @@ public class TextAreaView extends BorderPane implements Observer {
 
   private void initializePane() {
     
+	/**
+	* Add the lables and text fields to the grid pane.
+	* Add button handler to button to register moves.
+	* Add key event handler to text fields to update button with 'Make Move'
+	*/
+	  
 	// row label and text box
 	Label row = new Label("row");
 	topGrid.add(row, 1, 0);
@@ -90,9 +110,14 @@ public class TextAreaView extends BorderPane implements Observer {
 
   private class TextFieldListener implements EventHandler<KeyEvent> {
 
+	/**
+	* The button text will be set to 'Make Move' whenever a key is entered
+	* in text box, so a user will never have to press 'Invalid Move' when making
+	* a new move.
+	*/
+	  
 	@Override
 	public void handle(KeyEvent event) {
-		// TODO Auto-generated method stub
 		if (theGame.stillRunning() == false)
 			return;
 			
@@ -103,9 +128,14 @@ public class TextAreaView extends BorderPane implements Observer {
   
   private class ButtonListener implements EventHandler<ActionEvent> {
 
+	/**
+	* Set button text to indicate if the player should make a new move.
+	* If a player wins, indicate winner in button text.
+	* If player enters an invalid move, indicate so in button text.
+	*/
+	  
 	@Override
 	public void handle(ActionEvent arg0) {
-		// handle Make Move button
 		
 		int row;
 		int column;
@@ -173,7 +203,13 @@ public class TextAreaView extends BorderPane implements Observer {
   
   @Override
   public void update(Observable o, Object arg) {
-    // TODO Auto-generated method stub
+    
+	/**
+	* Once the game sends an update, check for 'new game' option or
+	* if a player has won the game. Print the board to stdout for debugging
+	* purposes.
+	*/
+	  
 	textArea.setText(theGame.toString());
 	
 	if (arg != null && arg.equals("startNewGame()"))

@@ -21,6 +21,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import model.TicTacToeGame;
 
+/**
+ * This Drawing view provides a canvas for the player to click on, selecting
+ * a point where to draw an 'X'. Squares on the board defined based on board coordinates.
+ * Drawing view updates in sync with the text area view and the button view.
+ * 
+ * @author David Weinflash
+ */
 
 public class DrawingView extends BorderPane implements Observer {
 
@@ -37,7 +44,12 @@ public class DrawingView extends BorderPane implements Observer {
 		theGame = TicTacToeGame;
 		endGame = false;
 		
-		// Define squares based on coordinates on canvas
+		/**
+		* Construct a canvas with the board to place onto TicTacToeGame.
+		* Define squares based on coordinates on canvas.
+		* Add 'Make Move' text and a Mouse Click event handler.
+		*/
+		
 		ArrayList<Point> squareOne = new ArrayList<>();
 		Point p1_a = new Point(0,0);
 		Point p1_b = new Point(66,66);
@@ -92,6 +104,7 @@ public class DrawingView extends BorderPane implements Observer {
 		squareNine.add(p9_a);
 		squareNine.add(p9_b);
 		
+		// add squares to list
 		squares = new ArrayList<>();
 		squares.add(squareOne);
 		squares.add(squareTwo);
@@ -103,6 +116,7 @@ public class DrawingView extends BorderPane implements Observer {
 		squares.add(squareEight);
 		squares.add(squareNine);
 		
+		// create canvas with event handler
 		Group root = new Group();
     	Canvas canvas = new Canvas(200,200);
     	EventHandler<MouseEvent> click = new CanvasHandler();
@@ -123,8 +137,6 @@ public class DrawingView extends BorderPane implements Observer {
     	imgO = new Image("file:images/o.png", false);
     	imgX = new Image("file:images/x.png", false);
     	
-
-    	
     	// set canvas
         BorderPane.setAlignment(canvas, Pos.CENTER);
         BorderPane.setMargin(canvas, new Insets(0, 0, 35, 0));
@@ -143,6 +155,12 @@ public class DrawingView extends BorderPane implements Observer {
 	@Override
 	public void update(Observable o, Object arg1) {
 
+		/**
+		* Update the board each time a new move is added to board.
+		* Create a new board when the New Game menu option is selected.
+		*/
+		
+		// new game menu option selected
 		if (arg1 != null && arg1.equals("startNewGame()"))
 		{
 			endGame = false;
@@ -163,7 +181,7 @@ public class DrawingView extends BorderPane implements Observer {
 		
 		char[][] board = theGame.getTicTacToeBoard();
 		
-		// list of squares with coordinates for drawing in center of square
+		// squareCoords a list of coordinates for drawing in center of square
 		// square one is first entry, top left of board
 		int[][] squareCoords = {{18, 18}, {84, 18}, {150, 18},
 								{18, 84}, {84,84}, {150, 84},
@@ -193,18 +211,21 @@ public class DrawingView extends BorderPane implements Observer {
 			}
 		}
 		
+		// tie game
 		if (theGame.tied())
 		{
 			stateButton.setText("Tie");
 			endGame = true;
 		}
 		
+		// x wins
 		if (theGame.didWin('X'))
 		{
 			stateButton.setText("X wins");
 			endGame = true;
 		}
 		
+		// o wins
 		if (theGame.didWin('O'))
 		{
 			stateButton.setText("O wins");
@@ -215,7 +236,11 @@ public class DrawingView extends BorderPane implements Observer {
 	
 	private class CanvasHandler implements EventHandler<MouseEvent> 
 	{
-
+		/**
+		* When the canvas is clicked, get coordinates of click and determine
+		* which square was clicked. Update game with new move based on click.
+		*/
+		
 		@Override
 		public void handle(MouseEvent e) {
 			

@@ -8,11 +8,13 @@ import java.util.Random;
  * 
  * @throws IGotNowhereToGoException whenever asked for a move that is impossible to deliver
  * 
- * @author mercer
+ * @author David Weinflash
  */
 public class RandomAI implements TicTacToeStrategy {
 
-  // Find an open spot while ignoring possible wins and stops (block a guaranteed win)
+  /**
+  * Find an open spot while ignoring possible wins and stops
+  */
   @Override
   public Point desiredMove(TicTacToeGame theGame) {
     // Throw IGotNowhereToGoException if no move available
